@@ -1,7 +1,26 @@
 <html>
 <body>
-Hello World! this is an important test.
+<form oninput="calculateResult(planet, weight, x)">
+    <select id="planet">
+    <option value="0.38">Mercury</option>
+    <option value="0.91">Venus</option>
+    <option selected value="1.00">Earth</option>
+    <option value="0.38">Mars</option>
+    <option value="2.34">Jupiter</option>
+    <option value="1.06">Saturn</option>
+    <option value="0.92">Uranus</option>
+    <option value="1.19">Neptune</option>
+    <option value="0.06">Pluto</option>
+</select>
+<label for="weight">Your Weight:</label>
+<input id="weight" type="number" name="Weight" value="50">
+<output name="x">50</output>
+</form>
 <script>
+    function calculateResult(planet, weight, x) {
+        let calculatedWeight = planet.value*weight.value;
+        x.value=(Math.round(calculatedWeight * 100) / 100);
+    }
     console.log("test");
 </script>
 
