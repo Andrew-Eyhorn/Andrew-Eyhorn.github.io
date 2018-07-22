@@ -1,0 +1,15 @@
+
+body {
+    background-color: black;
+    color: white;
+}
+
+ul li{
+    display: inline;
+  
+}
+
+img {
+    width: 190px;
+    cursor: hand;
+}
