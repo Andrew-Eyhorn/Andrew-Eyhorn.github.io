@@ -12,4 +12,11 @@ ul li{
 img {
     width: 190px;
     cursor: hand;
+    opacity: 0.3;
+}
+img:hover {
+    opacity: 0.8;
+}
+.active {
+    opacity:1;
 }
