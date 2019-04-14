@@ -1,0 +1,52 @@
+<html>
+
+<head>
+</head>
+
+<body>
+    <p id=1>
+        ...
+    </p>
+</body>
+<script>
+    const sleep = (milliseconds) => {
+        return new Promise(resolve => setTimeout(resolve, milliseconds))
+    }
+    const numberOfElements = 10;
+    let numberSet = [];
+    let swapPlaceHolder = 0;
+    var numberList = document.getElementById(1)
+    for (i = 0; i < numberOfElements; i++) {
+        let randomNumber = Math.round((Math.random() * ((19 - 1) + 1)) + 1);
+        numberSet[i] = randomNumber;
+    };
+    numberList.innerHTML = numberSet
+    console.log(numberSet);
+    var numbersSwapped = true;
+
+    async function passthrough() {
+        numbersSwapped = false
+        for (i = 0; i < numberOfElements - 1; i++) {
+            await sleep(200);
+            if (numberSet[i] <= numberSet[i + 1]) continue;
+            swapPlaceHolder = numberSet[i + 1];
+            numberSet[i + 1] = numberSet[i];
+            numberSet[i] = swapPlaceHolder;
+            numbersSwapped = true;
+            numberList.innerHTML = numberSet
+        }
+
+
+
+    }
+
+    async function run() {
+        while (numbersSwapped) {
+            await passthrough();
+        }
+    }
+    run();
+    console.log(numberSet);
+</script>
+
+</html>
