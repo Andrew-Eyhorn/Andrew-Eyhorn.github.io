@@ -1,12 +1,22 @@
 <html>
 
 <head>
+    <style>
+        .numberSet {
+            display: inline-block
+        }
+        .number {
+            border-style: solid;
+            border-width: 1px;
+            margin: 1px;
+            width:10%
+            
+        }
+    </style>
 </head>
 
 <body>
-    <p id=1>
-        ...
-    </p>
+<div id = 'numberSet'></div>
 </body>
 <script>
     const sleep = (milliseconds) => {
@@ -15,15 +25,34 @@
     const numberOfElements = 10;
     let numberSet = [];
     let swapPlaceHolder = 0;
-    var numberList = document.getElementById(1)
+    let numberSetPlaceholder;
+    var numberList = document.getElementById(69)
+    document.addEventListener("DOMContentLoaded", () => { 
+              numberSetPlaceholder = document.getElementById('numberSet')
+               generateNumbers();
+               displayNumbers();
+              });
+   function generateNumbers() {
     for (i = 0; i < numberOfElements; i++) {
         let randomNumber = Math.round((Math.random() * ((19 - 1) + 1)) + 1);
-        numberSet[i] = randomNumber;
+        numberSet.push(randomNumber);
     };
-    numberList.innerHTML = numberSet
-    console.log(numberSet);
-    var numbersSwapped = true;
+   } 
+  function displayNumbers() {
+      for (let number of numberSet) {
+          let numberSetVisual = document.createElement('div');
+          numberSetVisual.classList.add('number');
+          numberSetVisual.setAttribute('style', `width:${number}%;`);
+          numberSetVisual.appendChild(document.createTextNode(number));
+          numberSetPlaceholder.appendChild(numberSetVisual);
+      }
+  }
 
+
+
+    console.log(numberSet);
+  
+    var numbersSwapped = true;
     async function passthrough() {
         numbersSwapped = false
         for (i = 0; i < numberOfElements - 1; i++) {
@@ -34,6 +63,7 @@
             numberSet[i] = swapPlaceHolder;
             numbersSwapped = true;
             numberList.innerHTML = numberSet
+
         }
 
 
