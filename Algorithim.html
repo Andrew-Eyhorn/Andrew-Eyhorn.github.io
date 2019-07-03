@@ -9,14 +9,20 @@
             border-style: solid;
             border-width: 1px;
             margin: 1px;
-            width:10%
-            
+            width:10%;
+            height: 20px;
+        }
+        .observing {
+            background-color: rgb(255, 123, 0);
         }
     </style>
 </head>
 
 <body>
 <div id = 'numberSet'></div>
+<label for="e">Delay</label>
+<input id="e" type="number" name="Delay" value="1"> 
+<button id="goButton" onclick="run()">Go</button>
 </body>
 <script>
     const sleep = (milliseconds) => {
@@ -27,11 +33,7 @@
     let swapPlaceHolder = 0;
     let numberSetPlaceholder;
     var numberList = document.getElementById(69)
-    document.addEventListener("DOMContentLoaded", () => { 
-              numberSetPlaceholder = document.getElementById('numberSet')
-               generateNumbers();
-               displayNumbers();
-              });
+ 
    function generateNumbers() {
     for (i = 0; i < numberOfElements; i++) {
         let randomNumber = Math.round((Math.random() * ((19 - 1) + 1)) + 1);
@@ -42,31 +44,52 @@
       for (let number of numberSet) {
           let numberSetVisual = document.createElement('div');
           numberSetVisual.classList.add('number');
-          numberSetVisual.setAttribute('style', `width:${number}%;`);
+          //numberSetVisual.setAttribute('style', `width:${number}%;`);
           numberSetVisual.appendChild(document.createTextNode(number));
           numberSetPlaceholder.appendChild(numberSetVisual);
       }
   }
 
-
+  document.addEventListener("DOMContentLoaded", () => { 
+              numberSetPlaceholder = document.getElementById('numberSet')
+               generateNumbers();
+               displayNumbers();
+              });
 
     console.log(numberSet);
   
     var numbersSwapped = true;
     async function passthrough() {
+        let delay = document.getElementById("e").value * 1000;
         numbersSwapped = false
         for (i = 0; i < numberOfElements - 1; i++) {
-            await sleep(200);
-            if (numberSet[i] <= numberSet[i + 1]) continue;
+            numberSetPlaceholder.children[i].classList.add('observing');
+            numberSetPlaceholder.children[i+1].classList.add('observing');
+            await sleep(delay); 
+            if (numberSet[i] <= numberSet[i + 1]) {
+                numberSetPlaceholder.children[i].classList.remove('observing');
+                numberSetPlaceholder.children[i+1].classList.remove('observing');
+                continue;
+            }
+            numberSetPlaceholder.children[i].classList.remove('observing');
+            numberSetPlaceholder.children[i+1].classList.remove('observing');
+            let rowHeight = numberSetPlaceholder.children[i].clientHeight;
+            numberSetPlaceholder.children[i+1].setAttribute('style', `transform: translate(0px, -${rowHeight+1}px); background-color: aqua; transition: background-color ${delay}ms, transform ${delay}ms`);
+            numberSetPlaceholder.children[i].setAttribute('style', `transform: translate(0px, ${rowHeight+1}px); background-color: aqua; transition: background-color ${delay}ms, transform ${delay}ms`);
+            await sleep(delay);
             swapPlaceHolder = numberSet[i + 1];
             numberSet[i + 1] = numberSet[i];
             numberSet[i] = swapPlaceHolder;
             numbersSwapped = true;
-            numberList.innerHTML = numberSet
+            //numberSetPlaceholder.children[i+1].setAttribute('style', `width:${numberSet[i]}%;`);
+            //numberSetPlaceholder.children[i].setAttribute('style', `width:${swapPlaceHolder}%;`);
+            numberSetPlaceholder.children[i+1].after(numberSetPlaceholder.children[i]);
+            numberSetPlaceholder.children[i+1].removeAttribute('style')
+            numberSetPlaceholder.children[i].removeAttribute('style')
 
         }
 
-
+    
 
     }
 
@@ -75,7 +98,7 @@
             await passthrough();
         }
     }
-    run();
+
     console.log(numberSet);
 </script>
 
