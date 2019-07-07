@@ -5,13 +5,15 @@
         .numberSet {
             display: inline-block
         }
+
         .number {
             border-style: solid;
             border-width: 1px;
             margin: 1px;
-            width:10%;
+            width: 10%;
             height: 20px;
         }
+
         .observing {
             background-color: rgb(255, 123, 0);
         }
@@ -19,10 +21,14 @@
 </head>
 
 <body>
-<div id = 'numberSet'></div>
-<label for="e">Delay</label>
-<input id="e" type="number" name="Delay" value="1"> 
-<button id="goButton" onclick="run()">Go</button>
+    <div id='numberSet'></div>
+    <label for="e">Delay</label>
+    <input id="e" type="number" name="Delay" value="0.1">   
+    <label>Algorithm</label> <select id="algorithmOption">
+        <option value = "selectionSort">Selection Sort</option>
+        <option value = "bubbleSort">Bubble Sort</option>
+        </select>
+    <button id="goButton" onclick="runAlgorithm()">Go</button>
 </body>
 <script>
     const sleep = (milliseconds) => {
@@ -33,73 +39,126 @@
     let swapPlaceHolder = 0;
     let numberSetPlaceholder;
     var numberList = document.getElementById(69)
- 
-   function generateNumbers() {
-    for (i = 0; i < numberOfElements; i++) {
-        let randomNumber = Math.round((Math.random() * ((19 - 1) + 1)) + 1);
-        numberSet.push(randomNumber);
-    };
-   } 
-  function displayNumbers() {
-      for (let number of numberSet) {
-          let numberSetVisual = document.createElement('div');
-          numberSetVisual.classList.add('number');
-          //numberSetVisual.setAttribute('style', `width:${number}%;`);
-          numberSetVisual.appendChild(document.createTextNode(number));
-          numberSetPlaceholder.appendChild(numberSetVisual);
-      }
-  }
 
-  document.addEventListener("DOMContentLoaded", () => { 
-              numberSetPlaceholder = document.getElementById('numberSet')
-               generateNumbers();
-               displayNumbers();
-              });
+    function generateNumbers() {
+        for (i = 0; i < numberOfElements; i++) {
+            let randomNumber = Math.round((Math.random() * ((19 - 1) + 1)) + 1);
+            numberSet.push(randomNumber);
+        };
+        //numberSet = [11,19,12,18,8,2,18,2,8,16];
+    }
 
+    function generateStyles() {
+        for (i = 0; i < 20; i++) {
+            document.styleSheets[0].addRule(`[data-value = "${i}"]`, `width: ${i*10}px`)
+        };
+    }
+
+    function displayNumbers() {
+        for (let number of numberSet) {
+            let numberSetVisual = document.createElement('div');
+            numberSetVisual.classList.add('number');
+            numberSetVisual.setAttribute('data-value', number);
+            numberSetVisual.appendChild(document.createTextNode(number));
+            numberSetPlaceholder.appendChild(numberSetVisual);
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        numberSetPlaceholder = document.getElementById('numberSet')
+        generateStyles();
+        generateNumbers();
+        displayNumbers();
+    });
+
+    function runAlgorithm() {
+       let algorithmType = document.getElementById('algorithmOption').selectedOptions[0].value;
+       if (algorithmType === 'bubbleSort') {
+           bubbleSort();
+           console.log(numberSet);
+       } else if (algorithmType === 'selectionSort') {
+           selectionSort();
+           console.log(numberSet);
+       }
+    }
     console.log(numberSet);
-  
+
     var numbersSwapped = true;
     async function passthrough() {
-        let delay = document.getElementById("e").value * 1000;
         numbersSwapped = false
         for (i = 0; i < numberOfElements - 1; i++) {
             numberSetPlaceholder.children[i].classList.add('observing');
-            numberSetPlaceholder.children[i+1].classList.add('observing');
-            await sleep(delay); 
+            numberSetPlaceholder.children[i + 1].classList.add('observing');
+            await sleep(delay);
             if (numberSet[i] <= numberSet[i + 1]) {
                 numberSetPlaceholder.children[i].classList.remove('observing');
-                numberSetPlaceholder.children[i+1].classList.remove('observing');
+                numberSetPlaceholder.children[i + 1].classList.remove('observing');
                 continue;
             }
             numberSetPlaceholder.children[i].classList.remove('observing');
-            numberSetPlaceholder.children[i+1].classList.remove('observing');
+            numberSetPlaceholder.children[i + 1].classList.remove('observing');
             let rowHeight = numberSetPlaceholder.children[i].clientHeight;
-            numberSetPlaceholder.children[i+1].setAttribute('style', `transform: translate(0px, -${rowHeight+1}px); background-color: aqua; transition: background-color ${delay}ms, transform ${delay}ms`);
-            numberSetPlaceholder.children[i].setAttribute('style', `transform: translate(0px, ${rowHeight+1}px); background-color: aqua; transition: background-color ${delay}ms, transform ${delay}ms`);
+            numberSetPlaceholder.children[i + 1].setAttribute('style', `transform: translate(0px, -${rowHeight + 1}px); background-color: aqua; transition: background-color ${delay}ms, transform ${delay}ms`);
+            numberSetPlaceholder.children[i].setAttribute('style', `transform: translate(0px, ${rowHeight + 1}px); background-color: aqua; transition: background-color ${delay}ms, transform ${delay}ms`);
             await sleep(delay);
             swapPlaceHolder = numberSet[i + 1];
             numberSet[i + 1] = numberSet[i];
             numberSet[i] = swapPlaceHolder;
             numbersSwapped = true;
-            //numberSetPlaceholder.children[i+1].setAttribute('style', `width:${numberSet[i]}%;`);
-            //numberSetPlaceholder.children[i].setAttribute('style', `width:${swapPlaceHolder}%;`);
-            numberSetPlaceholder.children[i+1].after(numberSetPlaceholder.children[i]);
-            numberSetPlaceholder.children[i+1].removeAttribute('style')
+            numberSetPlaceholder.children[i + 1].after(numberSetPlaceholder.children[i]);
+            numberSetPlaceholder.children[i + 1].removeAttribute('style')
             numberSetPlaceholder.children[i].removeAttribute('style')
 
         }
 
-    
+
 
     }
-
-    async function run() {
+    async function swapElements(index1, index2) {
+            let distance = index2 - index1;
+            let delay = document.getElementById("e").value * 1000;
+            let rowHeight = numberSetPlaceholder.children[index1].clientHeight;
+            let swapDistance = distance*(rowHeight + 1);
+            numberSetPlaceholder.children[index2].setAttribute('style', `transform: translate(0px, -${swapDistance}px); background-color: aqua; transition: background-color ${delay}ms, transform ${delay}ms`);
+            numberSetPlaceholder.children[index1].setAttribute('style', `transform: translate(0px, ${swapDistance}px); background-color: aqua; transition: background-color ${delay}ms, transform ${delay}ms`);
+            await sleep(delay);
+            swapPlaceHolder = numberSet[index2];
+            numberSet[index2] = numberSet[index1];
+            numberSet[index1] = swapPlaceHolder;
+            numberSetPlaceholder.children[index2].removeAttribute('style')
+            numberSetPlaceholder.children[index1].removeAttribute('style')
+            if (distance === 1) {
+                numberSetPlaceholder.children[index2].after(numberSetPlaceholder.children[index1]);
+            } else {
+                numberSetPlaceholder.children[index1].after(numberSetPlaceholder.children[index2]);
+                numberSetPlaceholder.children[index2].after(numberSetPlaceholder.children[index1]);
+            }
+    }
+    
+    async function bubbleSort() {
         while (numbersSwapped) {
             await passthrough();
         }
-    }
-
-    console.log(numberSet);
+    }  
+    async function selectionSort() {
+    var numbersSorted = 0
+    var arrayNumber = 0
+    for (i = 0; i  < numberOfElements - 1; i++) {
+        var currentMin = numberSet[i];
+        for (j = numbersSorted + 1; j < numberOfElements; j++) {
+            if (numberSet[j] < currentMin) {
+                currentMin = numberSet[j]
+                arrayNumber = j
+            }
+        }
+       if (numberSet[i] !== currentMin) {
+        await swapElements(i, arrayNumber) 
+       } 
+       numbersSorted += 1;    
+     }
+     console.log(numberSet);
+    }  
+   console.log(numberSet);
 </script>
 
 </html>
