@@ -7,9 +7,8 @@
         }
 
         .number {
-            border-style: solid;
-            border-width: 1px;
-            margin: 1px;
+            background-color:paleturquoise;
+            margin: 3px;
             width: 10%;
             height: 20px;
         }
@@ -18,18 +17,29 @@
             background-color: rgb(255, 123, 0);
         }
         .minValue {
-            background-color: red
+            background-color: #f44336;
         }
     </style>
 </head>
 
 <body>
     <div id='numberSet'></div>
-    <label for="e">Delay</label>
-    <input id="e" type="number" name="Delay" value="0.1">
-    <label>Algorithm</label> <select id="algorithmOption">
-        <option value="selectionSort">Selection Sort</option>
+    <label for="delay">Delay(seconds):</label> <select id="delay">
+        <option value = 0>0</option>
+        <option value = 0.1>0.1</option>
+        <option value = 0.2>0.2</option>
+        <option value = 0.3>0.3</option>
+        <option value = 0.4>0.4</option>
+        <option selected value = 0.5>0.5</option>
+        <option value = 0.6>0.6</option>
+        <option value = 0.7>0.7</option>
+        <option value = 0.8>0.8</option>
+        <option value = 0.9>0.9</option>
+        <option value = 1>1</option>
+    </select>
+    <label>Algorithm:</label> <select id="algorithmOption">
         <option value="bubbleSort">Bubble Sort</option>
+        <option value="selectionSort">Selection Sort</option>
     </select>
     <button id="goButton" onclick="runAlgorithm()">Go</button>
 </body>
@@ -75,7 +85,7 @@
     });
 
     function runAlgorithm() {
-        delay = document.getElementById("e").value * 1000;
+        delay = document.getElementById("delay").value * 1000;
         let algorithmType = document.getElementById('algorithmOption').selectedOptions[0].value;
         if (algorithmType === 'bubbleSort') {
             bubbleSort();
@@ -101,17 +111,8 @@
             }
             numberSetPlaceholder.children[i].classList.remove('observing');
             numberSetPlaceholder.children[i + 1].classList.remove('observing');
-            let rowHeight = numberSetPlaceholder.children[i].clientHeight;
-            numberSetPlaceholder.children[i + 1].setAttribute('style', `transform: translate(0px, -${rowHeight + 1}px); background-color: aqua; transition: background-color ${delay}ms, transform ${delay}ms`);
-            numberSetPlaceholder.children[i].setAttribute('style', `transform: translate(0px, ${rowHeight + 1}px); background-color: aqua; transition: background-color ${delay}ms, transform ${delay}ms`);
-            await sleep(delay);
-            swapPlaceHolder = numberSet[i + 1];
-            numberSet[i + 1] = numberSet[i];
-            numberSet[i] = swapPlaceHolder;
+            await swapElements(i, i+1);
             numbersSwapped = true;
-            numberSetPlaceholder.children[i + 1].after(numberSetPlaceholder.children[i]);
-            numberSetPlaceholder.children[i + 1].removeAttribute('style')
-            numberSetPlaceholder.children[i].removeAttribute('style')
 
         }
 
@@ -121,7 +122,7 @@
     async function swapElements(index1, index2) {
         let distance = index2 - index1;
         let rowHeight = numberSetPlaceholder.children[index1].clientHeight;
-        let swapDistance = distance * (rowHeight + 1);
+        let swapDistance = distance * (rowHeight + 3);
         numberSetPlaceholder.children[index2].setAttribute('style', `transform: translate(0px, -${swapDistance}px); background-color: aqua; transition: background-color ${delay}ms, transform ${delay}ms`);
         numberSetPlaceholder.children[index1].setAttribute('style', `transform: translate(0px, ${swapDistance}px); background-color: aqua; transition: background-color ${delay}ms, transform ${delay}ms`);
         await sleep(delay);
