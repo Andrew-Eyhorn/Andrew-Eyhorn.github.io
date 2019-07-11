@@ -38,6 +38,7 @@
         <option value = 1>1</option>
     </select>
     <label>Algorithm:</label> <select id="algorithmOption">
+        <option value="quickSort">Quick Sort</option>
         <option value="bubbleSort">Bubble Sort</option>
         <option value="selectionSort">Selection Sort</option>
     </select>
@@ -93,7 +94,10 @@
         } else if (algorithmType === 'selectionSort') {
             selectionSort();
             console.log(numberSet);
+        } else if (algorithmType === 'quickSort') {
+            quickSort(numberSet, 0, numberOfElements - 1);
         }
+        console.log(numberSet);
     }
     console.log(numberSet);
 
@@ -175,6 +179,33 @@
         }
         console.log(numberSet);
     }
+    async function quickSort(numbers, low, high) {
+        if (low < high) {
+           const partitionIndex = await partition(numbers, low, high)  
+           await quickSort(numbers, low, partitionIndex);
+           await quickSort(numbers, partitionIndex + 1, high);
+        }
+        numberSet = numbers
+
+    }
+    async function partition(numbers, low, high) {
+        const pivot = numbers[Math.floor((high + low)/2)];
+        while (true) {
+            while (numbers[low] < pivot) {
+                low += 1
+            } 
+            while (numbers[high] > pivot) {
+                high -= 1
+            }
+            if (low >= high) {
+                return high
+            }
+            await swapElements(low, high);
+            low += 1
+            high -= 1
+        }
+    }
+   
     console.log(numberSet);
 </script>
 
