@@ -7,7 +7,7 @@
         }
 
         .number {
-            background-color:paleturquoise;
+            background-color: paleturquoise;
             margin: 3px;
             width: 10%;
             height: 20px;
@@ -16,8 +16,17 @@
         .observing {
             background-color: rgb(255, 123, 0);
         }
+
         .minValue {
             background-color: #f44336;
+        }
+
+        .pivot {
+            background-color: #f44336;
+        }
+
+        .selected {
+            background-color: green;
         }
     </style>
 </head>
@@ -25,21 +34,22 @@
 <body>
     <div id='numberSet'></div>
     <label for="delay">Delay(seconds):</label> <select id="delay">
-        <option value = 0>0</option>
-        <option value = 0.1>0.1</option>
-        <option value = 0.2>0.2</option>
-        <option value = 0.3>0.3</option>
-        <option value = 0.4>0.4</option>
-        <option selected value = 0.5>0.5</option>
-        <option value = 0.6>0.6</option>
-        <option value = 0.7>0.7</option>
-        <option value = 0.8>0.8</option>
-        <option value = 0.9>0.9</option>
-        <option value = 1>1</option>
+        <option value=0>0</option>
+        <option value=0.1>0.1</option>
+        <option value=0.2>0.2</option>
+        <option value=0.3>0.3</option>
+        <option value=0.4>0.4</option>
+        <option selected value=0.5>0.5</option>
+        <option value=0.6>0.6</option>
+        <option value=0.7>0.7</option>
+        <option value=0.8>0.8</option>
+        <option value=0.9>0.9</option>
+        <option value=1>1</option>
     </select>
     <label>Algorithm:</label> <select id="algorithmOption">
         <option value="bubbleSort">Bubble Sort</option>
         <option value="selectionSort">Selection Sort</option>
+        <option value="quickSort">Quick Sort</option>
     </select>
     <button id="goButton" onclick="runAlgorithm()">Go</button>
 </body>
@@ -58,7 +68,6 @@
             let randomNumber = Math.round((Math.random() * ((19 - 1) + 1)) + 1);
             numberSet.push(randomNumber);
         };
-        //numberSet = [11,19,12,18,8,2,18,2,8,16];
     }
 
     function generateStyles() {
@@ -77,6 +86,14 @@
         }
     }
 
+    function markElementAs(className, index) {
+        numberSetPlaceholder.children[index].classList.add(className);
+    }
+
+    function unMarkElementAs(className, index) {
+        numberSetPlaceholder.children[index].classList.remove(className);
+    }
+
     document.addEventListener("DOMContentLoaded", () => {
         numberSetPlaceholder = document.getElementById('numberSet')
         generateStyles();
@@ -93,7 +110,10 @@
         } else if (algorithmType === 'selectionSort') {
             selectionSort();
             console.log(numberSet);
+        } else if (algorithmType === 'quickSort') {
+            quickSort(numberSet, 0, numberOfElements - 1);
         }
+        console.log(numberSet);
     }
     console.log(numberSet);
 
@@ -101,17 +121,17 @@
     async function passthrough() {
         numbersSwapped = false
         for (i = 0; i < numberOfElements - 1; i++) {
-            numberSetPlaceholder.children[i].classList.add('observing');
-            numberSetPlaceholder.children[i + 1].classList.add('observing');
+            markElementAs('observing', i)
+            markElementAs('observing', i + 1)
             await sleep(delay);
             if (numberSet[i] <= numberSet[i + 1]) {
-                numberSetPlaceholder.children[i].classList.remove('observing');
-                numberSetPlaceholder.children[i + 1].classList.remove('observing');
+                unMarkElementAs('observing', i);
+                unMarkElementAs('observing', i + 1);
                 continue;
             }
-            numberSetPlaceholder.children[i].classList.remove('observing');
-            numberSetPlaceholder.children[i + 1].classList.remove('observing');
-            await swapElements(i, i+1);
+            unMarkElementAs('observing', i);
+            unMarkElementAs('observing', i + 1);
+            await swapElements(i, i + 1);
             numbersSwapped = true;
 
         }
@@ -150,31 +170,76 @@
             var currentMin = numberSet[i];
             var minValueIndex = i
             for (j = numbersSorted + 1; j < numberOfElements; j++) {
-                numberSetPlaceholder.children[minValueIndex].classList.add('minValue')
-                numberSetPlaceholder.children[j].classList.add('observing')
-                await sleep(delay); 
+                markElementAs('minValue', minValueIndex);
+                markElementAs('observing', j);
+                await sleep(delay);
                 if (numberSet[j] < currentMin) {
-                    numberSetPlaceholder.children[j].classList.remove('observing');
-                    numberSetPlaceholder.children[minValueIndex].classList.remove('minValue');
+                    unMarkElementAs('observing', j);
+                    unMarkElementAs('minValue', minValueIndex);
                     currentMin = numberSet[j]
                     minValueIndex = j
                 } else {
-                    numberSetPlaceholder.children[j].classList.remove('observing');
+                    unMarkElementAs('observing', j);
                 }
 
             }
-            numberSetPlaceholder.children[i].classList.add('observing')
-            await sleep(delay); 
-            numberSetPlaceholder.children[minValueIndex].classList.remove('minValue');
-            numberSetPlaceholder.children[i].classList.remove('observing');
+            markElementAs('observing', i);
+            await sleep(delay);
+            unMarkElementAs('minValue', minValueIndex);
+            unMarkElementAs('observing', i);
             if (numberSet[i] !== currentMin) {
-                numberSetPlaceholder.children[minValueIndex].classList.remove('minValue');
+                unMarkElementAs('minValue', minValueIndex);
                 await swapElements(i, minValueIndex)
             }
             numbersSorted += 1;
         }
         console.log(numberSet);
     }
+    async function quickSort(numbers, low, high) {
+        if (low < high) {
+            const partitionIndex = await partition(numbers, low, high)
+            await quickSort(numbers, low, partitionIndex);
+            await quickSort(numbers, partitionIndex + 1, high);
+        }
+        numberSet = numbers
+
+    }
+    async function partition(numbers, low, high) {
+        const pivotIndex = Math.floor((high + low) / 2)
+        markElementAs('pivot', pivotIndex)
+        await sleep(delay);
+        const pivot = numbers[pivotIndex];
+        while (true) {
+            while (numbers[low] < pivot) {
+                markElementAs('observing', low)
+                await sleep(delay);
+                unMarkElementAs('observing', low);
+                low += 1
+            }
+            await sleep(delay);
+            markElementAs('selected', low)
+            while (numbers[high] > pivot) {
+                markElementAs('observing', high)
+                await sleep(delay);
+                unMarkElementAs('observing', high);
+                high -= 1
+            }
+            await sleep(delay);
+            markElementAs('selected', high)
+            await sleep(delay);
+            unMarkElementAs('selected', low);
+            unMarkElementAs('selected', high);
+            if (low >= high) {
+                const pivotElements = document.getElementsByClassName('pivot');
+                pivotElements[0].classList.remove('pivot');
+                return high
+            }
+            await swapElements(low, high);
+            low += 1
+            high -= 1
+        }
+    }
+
     console.log(numberSet);
 </script>
 
