@@ -1,0 +1,71 @@
+<html>
+
+<head>
+    <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+
+<body>
+    <ul id="planets">
+        <li>
+            <img data-name="Mercury" data-gravity="0.38" src="images/mercury.png">
+        </li>
+        <li>
+            <img data-name="Venus" data-gravity="0.91" src="images/venus.png">
+        </li>
+        <li>
+                <img data-name="Earth" data-gravity="1" src="images/earth.png" class="active">
+        </li>
+        <li>
+                <img data-name="Mars" data-gravity="0.38" src="images/mars.png">
+        </li>
+        <li>
+                <img data-name="Jupiter" data-gravity="2.34" src="images/jupiter.png">
+        </li>
+        <li>
+                <img data-name="Saturn" data-gravity="1.06" src="images/saturn.png">
+        </li>
+        <li>
+                <img data-name="Uranus" data-gravity="0.92" src="images/uranus.png">
+        </li>
+        <li>
+                <img data-name="Neptune" data-gravity="1.19" src="images/neptune.png">
+        </li>
+    </ul>
+
+    <label for="weight">Your Weight:</label>
+    <input id="weight" type="number" name="Weight" value="50"> Your weight on
+    <span id="planetName">Earth</span> would be:
+    <output id="outputWeight">50</output>
+    <script>
+        let inputWeight = document.getElementById("weight");
+        let outputWeight = document.getElementById("outputWeight");
+        let planetsList = document.getElementById("planets");
+        let gravity = 1;
+        let planetNameElement = document.getElementById("planetName");
+        let previousPlanet = document.getElementsByClassName("active")[0];
+        planetsList.addEventListener("click", planetSelectedEventHandler);
+        inputWeight.addEventListener("keyup", calculateResult);
+
+        function calculateResult() {
+            let calculatedWeight = gravity * inputWeight.value;
+            outputWeight.value = (Math.round(calculatedWeight * 100) / 100);
+        }
+
+        function planetSelectedEventHandler(event) {
+            let currentElement = event.target;
+            let dataset = currentElement.dataset;     
+            if (!dataset.hasOwnProperty("gravity")) return;
+            
+            previousPlanet.classList.remove("active");
+            currentElement.classList.add("active");
+            previousPlanet = currentElement;
+            gravity = dataset.gravity;
+            planetNameElement.innerText = dataset.name;
+            calculateResult();
+            console.log(gravity);
+        }
+    </script>
+
+</body>
+
+</html>
